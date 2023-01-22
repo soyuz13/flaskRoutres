@@ -61,6 +61,7 @@ def main():
     lst = parce_sheet(wb[WORKSHEET])
     # print(lst)
     df = create_structure(lst)
+
     df.to_excel('123.xlsx', index=False)
 
 
