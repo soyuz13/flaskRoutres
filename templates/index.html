@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Сплит</title>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+    <link rel="stylesheet" type="text/css"
+          href={{ url_for('static', filename='/smart/source/styles/smart.default.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='/bootstrap/css/bootstrap.min.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='/style.css') }}>
+
+
+</head>
+<body class="viewport">
+
+<smart-menu id="menu" drop-down-append-to="body">
+        <smart-menu-items-group>
+            Проект
+            <smart-menu-item shortcut="Ctrl+N">Новый</smart-menu-item>
+            <smart-menu-item shortcut="Ctrl+E">Экспорт в Excel</smart-menu-item>
+            <smart-menu-items-group>
+                Недавние проекты
+                <smart-menu-item>Таффи-трамвайная</smart-menu-item>
+                <smart-menu-item>ДНС-первая речка</smart-menu-item>
+                <smart-menu-item>57 школа</smart-menu-item>
+            </smart-menu-items-group>
+             <smart-menu-item>Удалить проект</smart-menu-item>
+        </smart-menu-items-group>
+</smart-menu>
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <p></p>
+            <p>Оборудование</p>
+            <smart-combo-box filterable>
+                {% for item in data %}
+                    <smart-list-item value="{{ item }}">{{ item }}</smart-list-item>
+                {% endfor %}
+            </smart-combo-box>
+            <p></p>
+            <smart-combo-box id="c2" filterable>
+                <smart-list-item value="1">Тестовые данные</smart-list-item>
+            </smart-combo-box>
+            <p></p>
+            <smart-list-box id="lb">
+                <smart-list-item value="1">Тестовые данные</smart-list-item>
+            </smart-list-box>
+            <p></p>
+            <p></p>
+            <p>Оснастка</p>
+            <smart-table id="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Название</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Кол-во</th>
+                        <th scope="col">Стоимость</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Шпилька</td>
+                        <td>10.6</td>
+                        <td>2</td>
+                        <td>21.2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <p></p>
+            <p>Спецификация</p>
+            <smart-grid id="grid"></smart-grid>
+        </div>
+    </div>
+</div>
+
+
+<!-- scripts -->
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.combobox.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.grid.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.list.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.menu.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.table.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/bootstrap/js/bootstrap.min.js') }}></script>
+<script type="module" src={{ url_for('static', filename='index.js') }}></script>
+
+</body>
+</html>
