@@ -2,6 +2,10 @@ smart-combo-box{
 	width: 500px;
 }
 
+smart-list-box{
+	width: 100%;
+}
+
 smart-table{
 	width: 300px;
 }

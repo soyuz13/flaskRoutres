@@ -1,16 +1,16 @@
-const combobox = document.querySelector('smart-combo-box');
+const combobox1 = document.querySelector('smart-combo-box');
 // const label = document.getElementById('mmm')
-
 const combobox2 = document.getElementById('c2');
-
-combobox.filterMode = 'containsIgnoreCase';
-combobox2.filterMode = 'containsIgnoreCase';
 const listbox = document.querySelector('smart-list-box');
 
-combobox.addEventListener('close', function (event) {
-	let selectedValues = combobox.selectedValues;
+combobox1.filterMode = 'containsIgnoreCase';
+combobox2.filterMode = 'containsIgnoreCase';
+listbox.filterMode = 'containsIgnoreCase';
+
+
+combobox1.addEventListener('close', function (event) {
+	let selectedValues = combobox1.selectedValues;
     // label.innerHTML = selectedValues;
-    // alert(selectedValues);
 
     // const url = {{ url_for("combo2", num = s)|tojson }};
     fetch(
