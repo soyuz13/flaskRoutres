@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Сплит</title>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+    <link rel="stylesheet" type="text/css"
+          href={{ url_for('static', filename='/smart/source/styles/smart.default.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='/bootstrap/css/bootstrap.min.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='/style.css') }}>
+</head>
+
+<body class="viewport">
+
+{% include "menu.html" %}
+
+{% block content %}
+{% endblock content %}
+
+<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.menu.js') }}></script>
+<script type="module" src={{ url_for('static', filename='/bootstrap/js/bootstrap.min.js') }}></script>
+
+</body>
+</html>

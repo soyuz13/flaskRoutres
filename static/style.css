@@ -1,9 +1,10 @@
 smart-combo-box{
-	width: 500px;
+	width: 100%;
 }
 
 smart-list-box{
 	width: 100%;
+	height: 500px;
 }
 
 smart-table{
@@ -17,6 +18,10 @@ smart-grid {
 
 smart-menu {
 	/*margin-left: 5%;*/
+	width: 100%;
+}
+
+smart-input {
 	width: 100%;
 }
 
