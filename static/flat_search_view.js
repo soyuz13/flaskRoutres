@@ -46,11 +46,14 @@ Smart('#flat_grid', class {
                             'Amount: number',
                         ]
                 }),
+            summaryRow: {
+                visible: true
+            },
             columns: [
-                {label: 'Название', dataField: 'Name', width: grid.clientWidth - 220},
+                {label: 'Название', dataField: 'Name', width: grid.clientWidth - 235},
                 {label: 'Кол-во', dataField: 'Quantity', width: 60},
-                {label: 'Цена', dataField: 'Price', summary: ['sum'], width: 80},
-                {label: 'Сумма', dataField: 'Amount', summary: ['sum'], width: 80}
+                {label: 'Цена', dataField: 'Price', width: 60},
+                {label: 'Сумма', dataField: 'Amount', summary: ['sum'], width: 96}
             ]
         }
     }
