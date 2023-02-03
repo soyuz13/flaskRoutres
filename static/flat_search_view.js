@@ -78,60 +78,66 @@ clear_button.addEventListener('click', function (event) {
     flat_input.focus();
 });
 
-listbox_flat_search.addEventListener('change', function (event) {
-    const detail = event.detail, value = detail.value;
-    // alert(value);
+// listbox_flat_search.addEventListener('change', function (event) {
+//     const detail = event.detail, selected = detail.selected, value = detail.value;
+//
+//     if (selected === true) {
+//
+//     }
+//
+//     // alert(value);
+//     fetch(
+//         './search',
+//         {
+//             method: 'POST',
+//             headers: {'Content-Type': 'application/json'},
+//             body: JSON.stringify({"id": value})
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             listbox_flat_search_selected = data;
+//         });
+// });
+
+function enter_handler(event) {
+    // alert(event);
+    const sel_value = Number(listbox_flat_search.selectedValues[0]);
+    // alert(listbox_flat_search.selectedValues);
     fetch(
         './search',
         {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"id": value})
+            body: JSON.stringify({"id": sel_value})
         })
         .then(response => response.json())
+        // .then(data => {
+        //     listbox_flat_search_selected = data;
+        //     alert(
+        //         listbox_flat_search_selected['name']
+        //     );
+        // })
         .then(data => {
-            listbox_flat_search_selected = data;
+            grid.addRow(
+                {
+                    "ID": "1",
+                    "Name": data['name'],
+                    "Quantity": 1,
+                    "Price": data['price'],
+                    "Amount": data['price']
+                })
         });
-});
+}
 
-listbox_flat_search.addEventListener('keypress', function (event) {
-    const detail = event.detail, value = detail.value;
+
+listbox_flat_search.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        grid.addRow(
-            {
-                "ID": "1",
-                "Name": listbox_flat_search_selected['name'],
-                "Quantity": 1,
-                "Price": listbox_flat_search_selected['price'],
-                "Amount": listbox_flat_search_selected['price']
-            })
+        enter_handler(event)
+    };
     }
-});
+);
 
-listbox_flat_search.addEventListener('dblclick', function (event) {
-    const detail = event.detail, value = detail.value;
-    fetch(
-        './search',
-        {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"id": value})
-        })
-        .then(response => response.json())
-        .then(data => {
-            listbox_flat_search_selected = data;
-        })
-        .then(
-                grid.addRow(
-        {
-            "ID": "1",
-            "Name": listbox_flat_search_selected['name'],
-            "Quantity": 1,
-            "Price": listbox_flat_search_selected['price'],
-            "Amount": listbox_flat_search_selected['price']
-        })
-
-        );
+listbox_flat_search.addEventListener('dblclick', enter_handler);
 
 
-});
+
