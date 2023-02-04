@@ -119,8 +119,8 @@ def search_good():
     with pny.db_session:
         data = Equipment.get(id=json_request)
 
-    return {"name": data.name, 'price': data.price}
+    return {"name": data.name, 'price': int(data.price)}
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

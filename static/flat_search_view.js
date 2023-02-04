@@ -3,7 +3,9 @@ const flat_input = document.getElementById('flat_input');
 const add_button = document.getElementById('add_button');
 const clear_button = document.getElementById('clear_button');
 const grid = document.getElementById('flat_grid');
+grid.selection.mode = 'one';
 let listbox_flat_search_selected = [];
+let rowId = null;
 
 window.onload = function () {
     flat_input.focus()
@@ -34,26 +36,30 @@ flat_input.addEventListener('keypress', function (event) {
 Smart('#flat_grid', class {
     get properties() {
         return {
+            selection: {enabled: true, action: 'click'},
+            appearance: {showRowHeaderNumber: true},
             behavior: {columnResizeMode: 'split'},
             dataSource: new Smart.DataAdapter(
                 {
                     dataFields:
                         [
                             'ID: number',
+                            // 'Autoincrement: number',
                             'Name: string',
-                            'Quantity: number',
+                            // 'Quantity: number',
                             'Price: number',
-                            'Amount: number',
+                            // 'Amount: number',
                         ]
                 }),
             summaryRow: {
                 visible: true
             },
             columns: [
-                {label: 'Название', dataField: 'Name', width: grid.clientWidth - 235},
-                {label: 'Кол-во', dataField: 'Quantity', width: 60},
-                {label: 'Цена', dataField: 'Price', width: 60},
-                {label: 'Сумма', dataField: 'Amount', summary: ['sum'], width: 96}
+                // {label: '№', dataField: 'Autoincrement', width: 3},
+                {label: 'Название', dataField: 'Name', width: grid.clientWidth - 117},
+                // {label: 'Кол-во', dataField: 'Quantity', width: 60},
+                {label: 'Цена', dataField: 'Price', summary: ['sum'], width: 67},
+                // {label: 'Сумма', dataField: 'Amount', summary: ['sum'], width: 96}
             ]
         }
     }
@@ -131,13 +137,20 @@ function enter_handler(event) {
 
 
 listbox_flat_search.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        enter_handler(event)
-    };
+        if (event.key === 'Enter') {enter_handler(event)};
+        if (event.key === 'Escape') {flat_input.focus()};
     }
 );
 
 listbox_flat_search.addEventListener('dblclick', enter_handler);
 
-
-
+grid.addEventListener('rowDoubleClick', function (event) {
+        const detail = event.detail,
+            row = detail.row,
+            originalEvent = detail.originalEvent,
+            id = detail.id;
+        console.log(id);
+        grid.deleteRow(id);
+        // alert(id);
+    }
+)
