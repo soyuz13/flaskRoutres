@@ -1,4 +1,5 @@
 from pony.orm import *
+from datetime import datetime
 
 
 db = Database("sqlite", "data/equipment.sqlite") #, create_db=True)
@@ -26,6 +27,15 @@ class Supplier(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str)
     equipment_code = Set(Equipment)
+
+
+class Project(db.Entity):
+    id = PrimaryKey(int, auto=True, unsigned=True)
+    name = Required(str)
+    table_name = Required(str)
+    create_date = Required(datetime)
+    modify_date = Optional(datetime)
+    customer = Optional(str)
 
 
 # sql_debug(True)

@@ -1,26 +1,36 @@
 <smart-menu id="menu" drop-down-append-to="body" checkboxes>
+    <smart-menu-items-group>
+        Проект
+        <smart-menu-item shortcut="Ctrl+N">Новый</smart-menu-item>
+        <smart-menu-item shortcut="Ctrl+E" id="export_project">Экспорт в Excel</smart-menu-item>
         <smart-menu-items-group>
-            Проект
-            <smart-menu-item shortcut="Ctrl+N">Новый</smart-menu-item>
-            <smart-menu-item shortcut="Ctrl+E" id="export_project">Экспорт в Excel</smart-menu-item>
-            <smart-menu-items-group>
-                Недавние проекты
-                <smart-menu-item>Таффи-трамвайная</smart-menu-item>
-                <smart-menu-item>ДНС-первая речка</smart-menu-item>
-                <smart-menu-item>57 школа</smart-menu-item>
-            </smart-menu-items-group>
-             <smart-menu-item>Удалить проект</smart-menu-item>
+            Недавние проекты
+            <smart-menu-item>Таффи-трамвайная</smart-menu-item>
+            <smart-menu-item>ДНС-первая речка</smart-menu-item>
+            <smart-menu-item>57 школа</smart-menu-item>
         </smart-menu-items-group>
-        <smart-menu-items-group>
-            Комплект
-            <smart-menu-item>Новый</smart-menu-item>
-            <smart-menu-item>Список</smart-menu-item>
-            <smart-menu-item>Экспорт в Excel</smart-menu-item>
-        </smart-menu-items-group>
-        <smart-menu-items-group>
-            Вид
-            <smart-menu-item><a href="/combo"></a>Пошаговый выбор</smart-menu-item>
-            <smart-menu-item><a href="/flat"></a>Плоский поиск</smart-menu-item>
-            <smart-menu-item><a href="/tree"></a>Группировка</smart-menu-item>
-        </smart-menu-items-group>
+        <smart-menu-item>Удалить проект</smart-menu-item>
+    </smart-menu-items-group>
+    <smart-menu-items-group>
+        Комплект
+        <smart-menu-item>Новый</smart-menu-item>
+        <smart-menu-item>Список</smart-menu-item>
+        <smart-menu-item>Экспорт в Excel</smart-menu-item>
+    </smart-menu-items-group>
+    <smart-menu-items-group>
+        Вид
+        <smart-menu-item><a href="/combo"></a>Пошаговый выбор</smart-menu-item>
+        <smart-menu-item><a href="/flat"></a>Плоский поиск</smart-menu-item>
+        <smart-menu-item><a href="/tree"></a>Группировка</smart-menu-item>
+    </smart-menu-items-group>
 </smart-menu>
+
+<smart-window id="new_project_window" opened label="Создать проект">
+    <p></p>
+    <p></p>
+    <smart-input placeholder="Название"></smart-input>
+    <p></p>
+    <smart-input placeholder="Заказчик"></smart-input>
+    <p></p>
+    <p></p>
+</smart-window>

@@ -122,5 +122,10 @@ def search_good():
     return {"name": data.name, 'price': int(data.price)}
 
 
+@app.route('/new_project', methods=['GET'])
+def new_project():
+    return render_template('new_project.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

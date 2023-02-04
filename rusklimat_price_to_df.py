@@ -61,8 +61,7 @@ def main():
     lst = parce_sheet(wb[WORKSHEET])
     # print(lst)
     df = create_structure(lst)
-
-    df.to_excel('price_to_df.xlsx', index=False)
+    df.to_excel('data/rusklimat_price_to_df.xlsx', index=False)
 
 
 if __name__ == '__main__':
