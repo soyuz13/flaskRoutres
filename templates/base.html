@@ -17,12 +17,9 @@
 <body class="viewport">
 
 {% include "menu.html" %}
-
 {% block content %}
 {% endblock content %}
-
 <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.menu.js') }}></script>
-<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.window.js') }}></script>
 <script type="module" src={{ url_for('static', filename='/jszip.min.js') }}></script>
 <script type="module" src={{ url_for('static', filename='/bootstrap/js/bootstrap.min.js') }}></script>
 <script type="module" src={{ url_for('static', filename='/menu.js') }}></script>

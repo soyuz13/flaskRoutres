@@ -8,12 +8,12 @@ smart-list-box{
 }
 
 smart-table{
-	width: 300px;
+	width: 100%;
 }
 
 smart-grid {
   width: 100%;
-  height: 600px;
+  height: 500px;
 }
 
 smart-menu {
@@ -21,7 +21,22 @@ smart-menu {
 	width: 100%;
 }
 
+smart-tabs {
+	/*margin-left: 5%;*/
+	width: 100%;
+	height: 800px;
+}
+
+#row1 {
+	margin-top: 10px;
+}
+
 smart-input {
 	width: 100%;
+}
+
+#project_name_label {
+    margin-left: auto;
+    margin-right: 5px;
 }
 

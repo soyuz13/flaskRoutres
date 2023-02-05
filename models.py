@@ -29,13 +29,18 @@ class Supplier(db.Entity):
     equipment_code = Set(Equipment)
 
 
-class Project(db.Entity):
-    id = PrimaryKey(int, auto=True, unsigned=True)
-    name = Required(str)
-    table_name = Required(str)
-    create_date = Required(datetime)
-    modify_date = Optional(datetime)
-    customer = Optional(str)
+def create_project_table_entity(entity):
+    class Project(entity):
+        id = PrimaryKey(int, auto=True)
+        name = Required(str)
+        table_name = Required(str)
+        create_date = Required(datetime)
+        modify_date = Optional(datetime)
+        customer = Optional(str)
+    return Project
+
+
+Project = create_project_table_entity(db.Entity)
 
 
 # sql_debug(True)
