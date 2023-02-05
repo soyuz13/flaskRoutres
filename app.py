@@ -41,7 +41,8 @@ def combo1():
 
 @app.route('/flat')
 def flat():
-    return render_template('flat_search_view.html', data={'project_list': app.config['PROJ_LIST'], 'project_name': app.config['PROJ_NAME']})
+    return render_template('flat_search_view.html',
+                           data={'project_list': app.config['PROJ_LIST'], 'project_name': app.config['PROJ_NAME']})
 
 
 @app.route('/flat_search', methods=['POST'])
@@ -134,11 +135,11 @@ def search_good():
         json_request = request.json['id']
     else:
         return ['Content-Type not supported!']
-
+#TODO в этой части вставить добавление позиции в таблицу соответствуюешл проекта. Вместо функции в стр. 236
     with pny.db_session:
         data = Equipment.get(id=json_request)
 
-    return {"name": data.name, 'price': int(data.price)}
+    return {"name": data.name, 'price': int(data.price), 'hc-code': data.hc_code}
 
 
 @app.route('/new_project', methods=['POST'])
@@ -151,8 +152,8 @@ def new_project():
     else:
         return ['Content-Type not supported!']
 
-    table_name = 'Proj_' + translit(project_name, 'ru', reversed=True).\
-        capitalize().\
+    table_name = 'Proj_' + translit(project_name, 'ru', reversed=True). \
+        capitalize(). \
         strip()
     table_name = re.sub('\W', '_', table_name)
     create_date = datetime.datetime.now()
@@ -164,7 +165,8 @@ def new_project():
             'id': pny.PrimaryKey(int, auto=True),
             'hc_code': pny.Optional(str),
             'name': pny.Required(str),
-            'price': pny.Optional(float)
+            'price': pny.Optional(float),
+            'date_add': pny.Required(datetime.datetime)
         })
         db2.generate_mapping(create_tables=True)
 
@@ -201,7 +203,7 @@ def delete_project():
     return redirect('/')
 
 
-@app.route('/get_project')
+@app.route('/get_project', methods=['POST'])
 def get_project():
     print(1)
     with pny.db_session:
@@ -213,20 +215,58 @@ def get_project():
             'id': pny.PrimaryKey(int, auto=True),
             'hc_code': pny.Optional(str),
             'name': pny.Required(str),
-            'price': pny.Optional(float)
+            'price': pny.Optional(float),
+            'date_add': pny.Required(datetime.datetime)
         })
         db2.generate_mapping(create_tables=True)
 
         with pny.db_session:
-            dat = pny.select(row for row in project_table_data)
-            print(dat)
-            exit(0)
+            data = [{'id': item.id, 'hc-code': item.hc_code, 'name': item.name, 'price': item.price} for item in
+                    pny.select(row for row in project_table_data)]
+            # print(data)
+            # exit(0)
 
     except Exception as ex:
         print(ex)
         return ['Не удалось создать новый проект!']
 
-    return redirect('/')
+    return data
+
+
+@app.route('/add_row', methods=['POST'])
+def add_row():
+    content_type = request.headers.get('Content-Type')
+
+    if content_type == 'application/json':
+        data = request.json['data']
+    else:
+        return ['Content-Type not supported!']
+
+    with pny.db_session:
+        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+
+    db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    project_table_data = type(project_table_name, (db2.Entity,), {
+        'id': pny.PrimaryKey(int, auto=True),
+        'hc_code': pny.Optional(str),
+        'name': pny.Required(str),
+        'price': pny.Optional(float),
+        'date_add': pny.Required(datetime.datetime)
+    })
+    db2.generate_mapping(create_tables=True)
+
+    with pny.db_session:
+        new_row = project_table_data(hc_code=data['hc-code'], name=data['name'], price=data['price'],
+                                     date_add=datetime.datetime.now())
+
+    with pny.db_session:
+        get_id = [id for id in pny.select(max(row.id) for row in project_table_data)][0]
+
+    # print(new_row)
+    print(get_id)
+    exit(0)
+
+    return data
 
 
 if __name__ == '__main__':

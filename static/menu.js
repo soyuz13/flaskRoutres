@@ -1,4 +1,4 @@
-window.onload = function () {
+window.addEventListener('load', function () {
     const export_project = document.getElementById('export_project');
     const new_project_window = document.getElementById('new_project_window');
     const new_project_menu_button = document.getElementById('new_project_menu_button');
@@ -88,4 +88,4 @@ window.onload = function () {
         element.addEventListener('click', load_project);
     })
 
-}
+});
