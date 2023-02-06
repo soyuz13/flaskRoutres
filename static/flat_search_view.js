@@ -40,30 +40,41 @@ flat_input.addEventListener('keypress', function (event) {
 
 });
 
-function add_row(index, row) {
-    alert(33);
-    fetch(
-        './add_row',
-        {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"data": row[0]['data']})
-        })
-        .then(response => response.json())
-        .then(data => {
-            grid.updateRow(index, {"id": data['id']});
-        });
-};
+// function add_row(index, row) {
+//     // console.log(row);
+//     // alert(33);
+//     // fetch(
+//     //     './add_row',
+//     //     {
+//     //         method: 'POST',
+//     //         headers: {'Content-Type': 'application/json'},
+//     //         body: JSON.stringify({"data": row[0]['data']})
+//     //     })
+//     //     .then(response => response.json())
+//     //     .then(data => {
+//     //         grid.updateRow(index, {"id": data['id']});
+//     //     });
+// };
 
-function del_row(index, row) {
-
-};
+// function del_row(index, row) {
+//     // console.log(index);
+//     // console.log(row);
+//     // alert(index);
+//     // alert(row);
+//     // fetch(
+//     //     './delete_row',
+//     //     {
+//     //         method: 'POST',
+//     //         headers: {'Content-Type': 'application/json'},
+//     //         body: JSON.stringify({"id": row.data['id']})
+//     //     });
+// };
 
 Smart('#flat_grid', class {
     get properties() {
         return {
-            onRowRemoved: del_row,
-            onRowInserted: add_row,
+            // onRowRemoved: del_row,
+            // onRowInserted: add_row,
             selection: {enabled: true, action: 'click'},
             appearance: {showRowHeaderNumber: true},
             behavior: {columnResizeMode: 'split'},
@@ -117,23 +128,32 @@ function enter_handler(event) {
                     "name": data['name'],
                     "price": data['price'],
                     "hc-code": data['hc-code'],
+                    "id": data['id']
                 })
         });
 }
 
 listbox_flat_search.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            enter_handler(event)
-        }
-        ;
-        if (event.key === 'Escape') {
-            flat_input.focus()
-        }
-        ;
-    });
+    if (event.key === 'Enter') {
+        enter_handler(event)
+    }
+    ;
+    if (event.key === 'Escape') {
+        flat_input.focus()
+    }
+    ;
+});
 
 listbox_flat_search.addEventListener('dblclick', enter_handler);
 
 grid.addEventListener('rowDoubleClick', function (event) {
-        grid.deleteRow(event.detail.id);
+    grid.deleteRow(event.detail.id, function (row) {
+        fetch(
+            './delete_row',
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"id": row['data']['id']})
+            });
     });
+});

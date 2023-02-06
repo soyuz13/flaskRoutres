@@ -41,11 +41,7 @@ window.addEventListener('load', function () {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({"name": project_name_input.value, 'customer': project_customer_input.value})
             })
-            .then(response => response.json())
-            .then(data => {
-                // document.getElementById('project_name_label').innerHTML = data['project_name'];
-                new_project_window.close();
-            })
+            .then(new_project_window.close())
     });
 
     new_project_cancel_button.addEventListener('click', () => {

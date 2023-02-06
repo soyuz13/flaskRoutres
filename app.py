@@ -2,6 +2,7 @@ import datetime
 
 from flask import Flask, render_template, request, redirect
 import pandas as pd
+import sqlite3
 from models import Level, Equipment, Project, db, create_project_table_entity
 import pony.orm as pny
 from transliterate import translit
@@ -129,17 +130,20 @@ def list1():
 
 @app.route('/search', methods=['POST'])
 def search_good():
+    '''Поиск товара в БД оборудования => добавление его в таблицу спецификации => получение из этой таблицы id
+    только что добавленной позиции => возврат полной записи в JS'''
     content_type = request.headers.get('Content-Type')
-
     if content_type == 'application/json':
         json_request = request.json['id']
     else:
         return ['Content-Type not supported!']
-#TODO в этой части вставить добавление позиции в таблицу соответствуюешл проекта. Вместо функции в стр. 236
     with pny.db_session:
         data = Equipment.get(id=json_request)
+    request_data = {"name": data.name, 'price': int(data.price), 'hc-code': data.hc_code}
 
-    return {"name": data.name, 'price': int(data.price), 'hc-code': data.hc_code}
+    request_data.update({'id': add_row(**request_data)})
+
+    return request_data
 
 
 @app.route('/new_project', methods=['POST'])
@@ -233,15 +237,7 @@ def get_project():
     return data
 
 
-@app.route('/add_row', methods=['POST'])
-def add_row():
-    content_type = request.headers.get('Content-Type')
-
-    if content_type == 'application/json':
-        data = request.json['data']
-    else:
-        return ['Content-Type not supported!']
-
+def add_row(**data):
     with pny.db_session:
         project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
 
@@ -259,14 +255,45 @@ def add_row():
         new_row = project_table_data(hc_code=data['hc-code'], name=data['name'], price=data['price'],
                                      date_add=datetime.datetime.now())
 
+    return new_row.id
+
+
+@app.route('/delete_row', methods=['POST'])
+def delete_row():
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        row_id = request.json['id']
+    else:
+        return ['Content-Type not supported!']
     with pny.db_session:
-        get_id = [id for id in pny.select(max(row.id) for row in project_table_data)][0]
+        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
 
-    # print(new_row)
-    print(get_id)
-    exit(0)
+    db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    project_table_data = type(project_table_name, (db2.Entity,), {
+        'id': pny.PrimaryKey(int, auto=True),
+        'hc_code': pny.Optional(str),
+        'name': pny.Required(str),
+        'price': pny.Optional(float),
+        'date_add': pny.Required(datetime.datetime)
+    })
+    db2.generate_mapping(create_tables=True)
 
-    return data
+    print(f'delete id={row_id}')
+
+    with pny.db_session:
+        project_table_data[row_id].delete()
+
+    return {'ok': 1}
+
+
+@app.route('/export')
+def export():
+    print('export')
+    with pny.db_session:
+        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    conn = sqlite3.connect("data/equipment.sqlite")
+    df = pd.read_sql_table(project_table_name, conn)
+    df.to_excel('222.xlsx')
 
 
 if __name__ == '__main__':
