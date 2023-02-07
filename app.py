@@ -10,7 +10,28 @@ import re
 
 app = Flask(__name__)
 
-app.config.update({'PROJ_ID': -1})
+app.config.update({
+    'PROJ_ID': -1,
+    'PROJ_TABLE_NAME': None,
+    'PROJ_NAME': None,
+})
+
+
+def get_project_table(table_name=''):
+    if not table_name:
+        with pny.db_session:
+            table_name = Project.get(id=app.config['PROJ_ID']).table_name
+
+    db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    project_table_data = type(table_name, (db2.Entity,), {
+        'id': pny.PrimaryKey(int, auto=True),
+        'hc_code': pny.Optional(str),
+        'name': pny.Required(str),
+        'price': pny.Optional(float),
+        'date_add': pny.Required(datetime.datetime)
+    })
+    db2.generate_mapping(create_tables=True)
+    return project_table_data
 
 
 # df = pd.read_excel('data/price_list.xlsx', sheet_name='Лист1')
@@ -38,39 +59,6 @@ def combo1():
     with pny.db_session:
         data = [(item.id, item.name) for item in Level.select(level=1)]
     return render_template('combo_view.html', data=data)
-
-
-@app.route('/flat')
-def flat():
-    return render_template('flat_search_view.html',
-                           data={'project_list': app.config['PROJ_LIST'], 'project_name': app.config['PROJ_NAME']})
-
-
-@app.route('/flat_search', methods=['POST'])
-def flat_search():
-    # def ensure_case_insensitive_like(db):
-    #     if db.provider.dialect == 'SQLite':
-    #         db.execute('PRAGMA case_sensitive_like = OFF')
-
-    content_type = request.headers.get('Content-Type')
-
-    if content_type == 'application/json':
-        json_request = request.json['keyword']
-    else:
-        return ['Content-Type not supported!']
-
-    # делим запрос на части по пробелам. Если меньше трех ключевых слов - дополняем пустыми
-    keyword = str(json_request).upper().split(' ')
-    keys = keyword + [''] * (3 - len(keyword)) if (len(keyword) <= 3) else keyword[:3]
-
-    with pny.db_session:
-        # ensure_case_insensitive_like(db)
-        data = [{'label': item.name, 'value': item.id} for item in pny.select(
-            p for p in Equipment if keys[0] in p.upper_name and keys[1] in p.upper_name and keys[2] in p.upper_name)]
-
-        # print(data)
-
-    return data
 
 
 @app.route('/level2', methods=['POST'])
@@ -128,6 +116,39 @@ def list1():
     return data
 
 
+@app.route('/flat')
+def flat():
+    return render_template('flat_search_view.html',
+                           data={'project_list': app.config['PROJ_LIST'], 'project_name': app.config['PROJ_NAME']})
+
+
+@app.route('/flat_search', methods=['POST'])
+def flat_search():
+    # def ensure_case_insensitive_like(db):
+    #     if db.provider.dialect == 'SQLite':
+    #         db.execute('PRAGMA case_sensitive_like = OFF')
+
+    content_type = request.headers.get('Content-Type')
+
+    if content_type == 'application/json':
+        json_request = request.json['keyword']
+    else:
+        return ['Content-Type not supported!']
+
+    # делим запрос на части по пробелам. Если меньше трех ключевых слов - дополняем пустыми
+    keyword = str(json_request).upper().split(' ')
+    keys = keyword + [''] * (3 - len(keyword)) if (len(keyword) <= 3) else keyword[:3]
+
+    with pny.db_session:
+        # ensure_case_insensitive_like(db)
+        data = [{'label': item.name, 'value': item.id} for item in pny.select(
+            p for p in Equipment if keys[0] in p.upper_name and keys[1] in p.upper_name and keys[2] in p.upper_name)]
+
+        # print(data)
+
+    return data
+
+
 @app.route('/search', methods=['POST'])
 def search_good():
     '''Поиск товара в БД оборудования => добавление его в таблицу спецификации => получение из этой таблицы id
@@ -156,23 +177,22 @@ def new_project():
     else:
         return ['Content-Type not supported!']
 
-    table_name = 'Proj_' + translit(project_name, 'ru', reversed=True). \
-        capitalize(). \
-        strip()
+    table_name = 'Proj_' + translit(project_name, 'ru', reversed=True).capitalize().strip()
     table_name = re.sub('\W', '_', table_name)
     create_date = datetime.datetime.now()
     modify_date = create_date
 
     try:
-        db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-        new_table = type(table_name, (db2.Entity,), {
-            'id': pny.PrimaryKey(int, auto=True),
-            'hc_code': pny.Optional(str),
-            'name': pny.Required(str),
-            'price': pny.Optional(float),
-            'date_add': pny.Required(datetime.datetime)
-        })
-        db2.generate_mapping(create_tables=True)
+        get_project_table(table_name=table_name)
+        # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+        # new_table = type(table_name, (db2.Entity,), {
+        #     'id': pny.PrimaryKey(int, auto=True),
+        #     'hc_code': pny.Optional(str),
+        #     'name': pny.Required(str),
+        #     'price': pny.Optional(float),
+        #     'date_add': pny.Required(datetime.datetime)
+        # })
+        # db2.generate_mapping(create_tables=True)
 
         with pny.db_session:
             project = Project(name=project_name,
@@ -209,27 +229,25 @@ def delete_project():
 
 @app.route('/get_project', methods=['POST'])
 def get_project():
-    print(1)
-    with pny.db_session:
-        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    # with pny.db_session:
+    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    #
+    # try:
+    #     db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    #     project_table_data = type(project_table_name, (db2.Entity,), {
+    #         'id': pny.PrimaryKey(int, auto=True),
+    #         'hc_code': pny.Optional(str),
+    #         'name': pny.Required(str),
+    #         'price': pny.Optional(float),
+    #         'date_add': pny.Required(datetime.datetime)
+    #     })
+    #     db2.generate_mapping(create_tables=True)
 
     try:
-        db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-        project_table_data = type(project_table_name, (db2.Entity,), {
-            'id': pny.PrimaryKey(int, auto=True),
-            'hc_code': pny.Optional(str),
-            'name': pny.Required(str),
-            'price': pny.Optional(float),
-            'date_add': pny.Required(datetime.datetime)
-        })
-        db2.generate_mapping(create_tables=True)
-
+        project_table_data = get_project_table()
         with pny.db_session:
             data = [{'id': item.id, 'hc-code': item.hc_code, 'name': item.name, 'price': item.price} for item in
                     pny.select(row for row in project_table_data)]
-            # print(data)
-            # exit(0)
-
     except Exception as ex:
         print(ex)
         return ['Не удалось создать новый проект!']
@@ -238,18 +256,20 @@ def get_project():
 
 
 def add_row(**data):
-    with pny.db_session:
-        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    # with pny.db_session:
+    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    #
+    # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    # project_table_data = type(project_table_name, (db2.Entity,), {
+    #     'id': pny.PrimaryKey(int, auto=True),
+    #     'hc_code': pny.Optional(str),
+    #     'name': pny.Required(str),
+    #     'price': pny.Optional(float),
+    #     'date_add': pny.Required(datetime.datetime)
+    # })
+    # db2.generate_mapping(create_tables=True)
 
-    db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    project_table_data = type(project_table_name, (db2.Entity,), {
-        'id': pny.PrimaryKey(int, auto=True),
-        'hc_code': pny.Optional(str),
-        'name': pny.Required(str),
-        'price': pny.Optional(float),
-        'date_add': pny.Required(datetime.datetime)
-    })
-    db2.generate_mapping(create_tables=True)
+    project_table_data = get_project_table()
 
     with pny.db_session:
         new_row = project_table_data(hc_code=data['hc-code'], name=data['name'], price=data['price'],
@@ -265,21 +285,23 @@ def delete_row():
         row_id = request.json['id']
     else:
         return ['Content-Type not supported!']
-    with pny.db_session:
-        project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
 
-    db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    project_table_data = type(project_table_name, (db2.Entity,), {
-        'id': pny.PrimaryKey(int, auto=True),
-        'hc_code': pny.Optional(str),
-        'name': pny.Required(str),
-        'price': pny.Optional(float),
-        'date_add': pny.Required(datetime.datetime)
-    })
-    db2.generate_mapping(create_tables=True)
+    # with pny.db_session:
+    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+    #
+    # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
+    # project_table_data = type(project_table_name, (db2.Entity,), {
+    #     'id': pny.PrimaryKey(int, auto=True),
+    #     'hc_code': pny.Optional(str),
+    #     'name': pny.Required(str),
+    #     'price': pny.Optional(float),
+    #     'date_add': pny.Required(datetime.datetime)
+    # })
+    # db2.generate_mapping(create_tables=True)
 
     print(f'delete id={row_id}')
 
+    project_table_data = get_project_table()
     with pny.db_session:
         project_table_data[row_id].delete()
 

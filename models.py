@@ -1,7 +1,6 @@
 from pony.orm import *
 from datetime import datetime
 
-
 db = Database("sqlite", "data/equipment.sqlite") #, create_db=True)
 
 
