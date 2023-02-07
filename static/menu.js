@@ -56,30 +56,6 @@ window.addEventListener('load', function () {
         project_name_input.focus();
     });
 
-    // delete_project_menu_button.addEventListener('click', (event) => {
-    //     fetch(
-    //         './delete_project',
-    //         {
-    //             method: 'POST',
-    //             headers: {'Content-Type': 'application/json'},
-    //             body: JSON.stringify({"name": document.getElementById('project_name_label').value})
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             document.getElementById('project_name_label').innerHTML = data['project_name'];
-    //             new_project_window.close();
-    //         })
-    //
-    //     fetch(
-    //         './delete_project',
-    //         {
-    //             method: 'POST',
-    //             headers: {'Content-Type': 'application/json'},
-    //             // body: JSON.stringify({"name": document.getElementById('project_name_label').value})
-    //         })
-    //         // .then(location.reload(true))
-    // });
-
     Array.from(recent_projects_list).forEach(function (element) {
         element.addEventListener('click', load_project);
     })

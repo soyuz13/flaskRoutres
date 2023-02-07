@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, send_file, url_for
 import pandas as pd
 import sqlite3
 from models import Level, Equipment, Project, db, create_project_table_entity
@@ -23,7 +23,7 @@ def get_project_table(table_name=''):
             table_name = Project.get(id=app.config['PROJ_ID']).table_name
 
     db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    project_table_data = type(table_name, (db2.Entity,), {
+    project_table = type(table_name, (db2.Entity,), {
         'id': pny.PrimaryKey(int, auto=True),
         'hc_code': pny.Optional(str),
         'name': pny.Required(str),
@@ -31,23 +31,30 @@ def get_project_table(table_name=''):
         'date_add': pny.Required(datetime.datetime)
     })
     db2.generate_mapping(create_tables=True)
-    return project_table_data
+    return project_table
 
 
 # df = pd.read_excel('data/price_list.xlsx', sheet_name='Лист1')
 
 
 @app.route('/', methods=['POST', 'GET'])
-def base():
+def base(project_id=0):
+    print(project_id)
     if request.method == 'POST':
-        content_type = request.headers.get('Content-Type')
-        if content_type == 'application/json':
-            json_request = request.json['project_id']
-            app.config.update({'PROJ_ID': json_request})
+        if project_id:
+            app.config.update({'PROJ_ID': project_id})
         else:
-            return ['Content-Type not supported!']
+            content_type = request.headers.get('Content-Type')
+            if content_type == 'application/json':
+                print('json')
+                json_request = request.json['project_id']
+                app.config.update({'PROJ_ID': json_request})
+            else:
+                print('not json')
+                return ['Content-Type not supported!']
 
     with pny.db_session:
+        print(f'proj - {app.config["PROJ_ID"]}')
         app.config.update({'PROJ_NAME': Project.get(id=app.config['PROJ_ID']).name})
         data = [(t.id, t.name) for t in Project.select().order_by(pny.desc(Project.create_date)) if t.id > 0]
         app.config.update({'PROJ_LIST': data})
@@ -184,16 +191,6 @@ def new_project():
 
     try:
         get_project_table(table_name=table_name)
-        # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-        # new_table = type(table_name, (db2.Entity,), {
-        #     'id': pny.PrimaryKey(int, auto=True),
-        #     'hc_code': pny.Optional(str),
-        #     'name': pny.Required(str),
-        #     'price': pny.Optional(float),
-        #     'date_add': pny.Required(datetime.datetime)
-        # })
-        # db2.generate_mapping(create_tables=True)
-
         with pny.db_session:
             project = Project(name=project_name,
                               table_name=table_name,
@@ -204,7 +201,7 @@ def new_project():
         print(ex)
         return ['Не удалось создать новый проект!']
 
-    return {"table_name": table_name, "project_name": project_name}
+    return redirect(url_for('base', project_id=project.id), code=307)
 
 
 @app.route('/delete_project')
@@ -229,25 +226,11 @@ def delete_project():
 
 @app.route('/get_project', methods=['POST'])
 def get_project():
-    # with pny.db_session:
-    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
-    #
-    # try:
-    #     db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    #     project_table_data = type(project_table_name, (db2.Entity,), {
-    #         'id': pny.PrimaryKey(int, auto=True),
-    #         'hc_code': pny.Optional(str),
-    #         'name': pny.Required(str),
-    #         'price': pny.Optional(float),
-    #         'date_add': pny.Required(datetime.datetime)
-    #     })
-    #     db2.generate_mapping(create_tables=True)
-
     try:
-        project_table_data = get_project_table()
+        project_table = get_project_table()
         with pny.db_session:
             data = [{'id': item.id, 'hc-code': item.hc_code, 'name': item.name, 'price': item.price} for item in
-                    pny.select(row for row in project_table_data)]
+                    pny.select(row for row in project_table)]
     except Exception as ex:
         print(ex)
         return ['Не удалось создать новый проект!']
@@ -256,25 +239,10 @@ def get_project():
 
 
 def add_row(**data):
-    # with pny.db_session:
-    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
-    #
-    # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    # project_table_data = type(project_table_name, (db2.Entity,), {
-    #     'id': pny.PrimaryKey(int, auto=True),
-    #     'hc_code': pny.Optional(str),
-    #     'name': pny.Required(str),
-    #     'price': pny.Optional(float),
-    #     'date_add': pny.Required(datetime.datetime)
-    # })
-    # db2.generate_mapping(create_tables=True)
-
-    project_table_data = get_project_table()
-
+    project_table = get_project_table()
     with pny.db_session:
-        new_row = project_table_data(hc_code=data['hc-code'], name=data['name'], price=data['price'],
+        new_row = project_table(hc_code=data['hc-code'], name=data['name'], price=data['price'],
                                      date_add=datetime.datetime.now())
-
     return new_row.id
 
 
@@ -286,24 +254,11 @@ def delete_row():
     else:
         return ['Content-Type not supported!']
 
-    # with pny.db_session:
-    #     project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
-    #
-    # db2 = pny.Database("sqlite", "data/equipment.sqlite")  # , create_db=True)
-    # project_table_data = type(project_table_name, (db2.Entity,), {
-    #     'id': pny.PrimaryKey(int, auto=True),
-    #     'hc_code': pny.Optional(str),
-    #     'name': pny.Required(str),
-    #     'price': pny.Optional(float),
-    #     'date_add': pny.Required(datetime.datetime)
-    # })
-    # db2.generate_mapping(create_tables=True)
-
     print(f'delete id={row_id}')
 
-    project_table_data = get_project_table()
+    project_table = get_project_table()
     with pny.db_session:
-        project_table_data[row_id].delete()
+        project_table[row_id].delete()
 
     return {'ok': 1}
 
@@ -313,9 +268,17 @@ def export():
     print('export')
     with pny.db_session:
         project_table_name = Project.get(id=app.config['PROJ_ID']).table_name
+        project_name = Project.get(id=app.config['PROJ_ID']).name
     conn = sqlite3.connect("data/equipment.sqlite")
-    df = pd.read_sql_table(project_table_name, conn)
-    df.to_excel('222.xlsx')
+    df = pd.read_sql(f'SELECT * FROM {project_table_name}', conn)
+    df.to_excel('project_export.xlsx', index=False)
+
+    return send_file(
+            'project_export.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            download_name=f'{project_name}.xlsx',
+            as_attachment=True
+        )
 
 
 if __name__ == '__main__':

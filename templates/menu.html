@@ -2,7 +2,7 @@
     <smart-menu-items-group>
         Проект
         <smart-menu-item shortcut="Ctrl+N" id="new_project_menu_button">Новый</smart-menu-item>
-        <smart-menu-item shortcut="Ctrl+E" id="export_project">Экспорт в Excel</smart-menu-item>
+        <smart-menu-item shortcut="Ctrl+E" id="export_project"><a href="/export"></a>Экспорт в Excel</smart-menu-item>
         <smart-menu-items-group>
             Недавние проекты
             {% for id, item in data['project_list'] %}
