@@ -55,8 +55,8 @@ def base():
         app.config.update({'PROJ_NAME': Project.get(id=app.config['PROJ_ID']).name})
         data = [(t.id, t.name) for t in Project.select().order_by(pny.desc(Project.create_date)) if t.id > 0]
         app.config.update({'PROJ_LIST': data})
-    # return render_template('base.html', data={'project_list': data, 'project_name': app.config['PROJ_NAME']})
-    return redirect(url_for('kit_list'))
+    return render_template('base.html', data={'project_list': data, 'project_name': app.config['PROJ_NAME']})
+    # return redirect(url_for('kit_list'))
 
 
 @app.route('/kit_list', methods=['POST', 'GET'])
@@ -68,16 +68,16 @@ def kit_list():
             for parent_id in parent_ids:
                 # берем каждый родительский id и получаем все id его наборов
                 package_ids = list(pny.select(row.package_id for row in Kit if row.parent_id == parent_id))
-                inner_data = {}
+                package_data = {}
                 for package_id in package_ids:
                     # берем каждый набор и получаем его состав: id и кол-во
-                    sub_equip_ids = list(pny.select(row.sub_equip_id for row in Kit if row.package_id == package_id))
-                    sub_names = list(pny.select(row.name for row in Equipment if row.id in sub_equip_ids))
-                    package_name = list(p.package_name for p in Kit.select(sub_equip_id=sub_equip_ids[0]))[0]
-                    parent_name = Equipment.get(id=parent_id).name
-                    inner_data.update({package_name: sub_names})
-                data.update({parent_name: inner_data})
-            # print(data)
+                    sub_equip_ids_counts = list(pny.select((row.sub_equip_id, row.quantity) for row in Kit if row.package_id == package_id))
+                    equipment_data = [{'name': Equipment.get(id=sub[0]).name, 'quantity': sub[1]} for sub in sub_equip_ids_counts]
+                    kit_name = list(Kit.select(package_id=package_id))[0].package_name
+                    package_data.update({kit_name: equipment_data})
+                parent_name = Equipment.get(id=parent_id).name
+                data.update({parent_name: package_data})
+            print(data)
         return data
     return render_template('kit_list.html', data={'project_list': app.config['PROJ_LIST'], 'project_name': app.config['PROJ_NAME']})
 
@@ -364,3 +364,13 @@ def new_kit():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
+
+
+dd = {
+    'Деталь1': {
+        "Набор 1": [
+            {'название': "шпилька1", "количество": 6},
+            {'название': "шпилька2", "количество": 4},
+        ]
+    }
+}
