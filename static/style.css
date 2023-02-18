@@ -4,7 +4,7 @@ smart-combo-box{
 
 smart-list-box{
 	width: 100%;
-	height: 500px;
+	height: 390px;
 }
 
 smart-table{
@@ -21,14 +21,19 @@ smart-menu {
 	width: 100%;
 }
 
+smart-tree {
+	/*margin-left: 5%;*/
+	width: 100%;
+}
+
 smart-tabs {
 	/*margin-left: 5%;*/
 	width: 100%;
 	height: 800px;
 }
 
-#row1 {
-	margin-top: 10px;
+.row {
+	margin-top: 15px;
 }
 
 smart-input {
@@ -38,5 +43,15 @@ smart-input {
 #project_name_label {
     margin-left: auto;
     margin-right: 5px;
+}
+
+#kit_grid {
+	width: 100%;
+	height: 390px;
+}
+
+.bottom-button {
+    margin-left:8px;
+    /*margin-right:8px;*/
 }
 

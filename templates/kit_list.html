@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container-fluid bg-light border">
+        <div class="row">
+            <div class="col-6">
+                <p>Список комплектов оснастки</p>
+                <p></p>
+                <smart-tree id="tree"
+                            filterable
+                            filter-input-placeholder="Фильтр..."
+                            filter-mode="contains"
+                            show-lines
+                            show-root-lines
+                            toggle-element-position="near">
+                    <smart-tree-items-group id="group-0" hidden>Первый</smart-tree-items-group>
+                </smart-tree>
+            </div>
+
+            <div class="col-6">
+                <p>Спецификация</p>
+                <smart-grid id="flat_grid"></smart-grid>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.grid.js') }}></script>
+    {#<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.list.js') }}></script>#}
+    {#<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.table.js') }}></script>#}
+    {#<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.button.js') }}></script>#}
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.tree.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='kit_list.js') }}></script>
+
+{% endblock content %}

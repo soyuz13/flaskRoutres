@@ -20,6 +20,7 @@ class Equipment(db.Entity):
     level_id = Required(Level)
     hc_code = Optional(str)
     supplier_id = Set('Supplier')
+    kit_id = Set('Kit')
 
 
 class Supplier(db.Entity):
@@ -37,6 +38,16 @@ def create_project_table_entity(entity):
         modify_date = Optional(datetime)
         customer = Optional(str)
     return Project
+
+
+class Kit(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    package_id = Required(int)
+    package_name = Required(str)
+    sub_equip_id = Required(int)
+    parent_id = Required(int)
+    quantity = Required(float)
+    equipments = Set(Equipment)
 
 
 Project = create_project_table_entity(db.Entity)

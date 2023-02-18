@@ -1,16 +1,29 @@
 const combobox1 = document.getElementById('combo1');
 const combobox2 = document.getElementById('combo2');
 const combobox3 = document.getElementById('combo3');
-const listbox1 = document.getElementById('list1');
+const listbox_combo_search = document.getElementById('list1');
 const add_button = document.querySelector('smart-button');
-const grid = document.querySelector('smart-grid');
-const rows = grid.rows;
-let listbox1_selected = [];
+const grid = document.getElementById('combo_grid');
 
 combobox1.filterMode = 'containsIgnoreCase';
 combobox2.filterMode = 'containsIgnoreCase';
 combobox2.filterMode = 'containsIgnoreCase';
-listbox1.filterMode = 'containsIgnoreCase';
+listbox_combo_search.filterMode = 'containsIgnoreCase';
+
+window.addEventListener('load', function () {
+    // flat_input.focus();
+    console.log(combobox1.offsetHeight);
+    console.log(window.outerHeight);
+    fetch(
+        './get_project',
+        {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            grid.dataSource = data
+        });
+});
 
 combobox1.addEventListener('close', function (event) {
 	let selectedValues = combobox1.selectedValues;
@@ -65,49 +78,41 @@ combobox3.addEventListener('close', function (event) {
       })
     .then(response => response.json())
     .then(data => {
-        listbox1.dataSource = data;
+        listbox_combo_search.dataSource = data;
     });
 });
 
-listbox1.addEventListener('itemClick', function (event) {
-    const detail = event.detail, value = detail.value;
-
-    fetch(
-        './search',
-        {
-            method : 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"id":value})
-      })
-    .then(response => response.json())
-    .then(data => {
-        listbox1_selected = data;
-    });
-});
-
-
-Smart('#grid', class {
-	get properties() {
-		return {
-			dataSource: new Smart.DataAdapter(
-			{
-				dataFields:
-				[
-					'ID: number',
-					'Name: string',
-					'Quantity: number',
-					'Price: number',
-					'Amount: number',
-				]
-			}),
-			columns: [
-                { label: 'Название', dataField: 'Name', width: 'auto'},
-                { label: 'Количество', dataField: 'Quantity'},
-                { label: 'Цена', dataField: 'Price'},
-                { label: 'Стоимость', dataField: 'Amount'}
-			]
-		}
-	}
+Smart('#combo_grid', class {
+    get properties() {
+        return {
+            // onRowRemoved: del_row,
+            // onRowInserted: add_row,
+            selection: {enabled: true, action: 'click'},
+            appearance: {showRowHeaderNumber: true},
+            behavior: {columnResizeMode: 'split'},
+            dataSource: new Smart.DataAdapter(
+                {
+                    dataFields:
+                        [
+                            'id: number',
+                            'name: string',
+                            'price: number',
+                            'hc-code: string',
+                            'supplier: string',
+                        ]
+                }),
+            summaryRow: {
+                visible: true
+            },
+            columns: [
+                {label: 'Название', dataField: 'name', width: grid.clientWidth - 117},
+                {label: 'Цена', dataField: 'price', summary: ['sum'], width: 67},
+                {label: 'id', dataField: 'id', visible: true},
+                {label: 'hc-code', dataField: 'hc-code', visible: false},
+                {label: 'supplier', dataField: 'supplier', visible: false}
+            ]
+        }
+    }
 });
 
 add_button.addEventListener('click', function(event) {
@@ -121,4 +126,51 @@ add_button.addEventListener('click', function(event) {
             "Amount": listbox1_selected['price']
         }
     );
+});
+
+function enter_handler(event) {
+    // alert(44);
+    const sel_value = Number(listbox_combo_search.selectedValues[0]);
+    fetch(
+        './search',
+        {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"id": sel_value, 'for_specification': true})
+        })
+        .then(response => response.json())
+        .then(data => {
+            grid.addRow(
+                {
+                    "name": data['name'],
+                    "price": data['price'],
+                    "hc-code": data['hc-code'],
+                    "id": data['id']
+                })
+        });
+}
+
+listbox_combo_search.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        enter_handler(event)
+    }
+    ;
+    if (event.key === 'Escape') {
+        combo_input.focus()
+    }
+    ;
+});
+
+listbox_combo_search.addEventListener('dblclick', enter_handler);
+
+grid.addEventListener('rowDoubleClick', function (event) {
+    grid.deleteRow(event.detail.id, function (row) {
+        fetch(
+            './delete_row',
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"id": row['data']['id']})
+            });
+    });
 });

@@ -1,67 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <p></p>
-            <p>Оборудование</p>
-            <smart-combo-box filterable id="combo1">
-                {% for id, item in data %}
-                    <smart-list-item value="{{ id }}">{{ item }}</smart-list-item>
-                {% endfor %}
-            </smart-combo-box>
-            <p></p>
-            <smart-combo-box id="combo2" filterable>
-                <smart-list-item value="1"></smart-list-item>
-            </smart-combo-box>
-            <p></p>
-            <smart-combo-box id="combo3" filterable>
-                <smart-list-item value="1"></smart-list-item>
-            </smart-combo-box>
-            <p></p>
-            <smart-list-box filterable id="list1">
-                <smart-list-item value="1"></smart-list-item>
-            </smart-list-box>
-            <p></p>
-            <smart-button class="primary" id="add_button">Добавить</smart-button>
-            <p></p>
-            <p></p>
-            <p>Оснастка</p>
-            <smart-table id="table">
-            <table>
-                <thead>
-                    <tr>
-                        <th scope="col">Название</th>
-                        <th scope="col">Цена</th>
-                        <th scope="col">Кол-во</th>
-                        <th scope="col">Стоимость</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Шпилька</td>
-                        <td>10.6</td>
-                        <td>2</td>
-                        <td>21.2</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-6">
-            <p></p>
-            <p>Спецификация</p>
-            <smart-grid id="grid"></smart-grid>
+    <div class="container-fluid bg-light border">
+        <div class="row">
+            <div class="col-6">
+                <p>Список доступного оборудования</p>
+                <smart-combo-box filterable id="combo1">
+                    {% for id, item in data['data'] %}
+                        <smart-list-item value="{{ id }}">{{ item }}</smart-list-item>
+                    {% endfor %}
+                </smart-combo-box>
+                <p></p>
+                <smart-combo-box id="combo2" filterable>
+                    <smart-list-item value="1"></smart-list-item>
+                </smart-combo-box>
+                <p></p>
+                <smart-combo-box id="combo3" filterable>
+                    <smart-list-item value="1"></smart-list-item>
+                </smart-combo-box>
+                <p></p>
+                <smart-list-box filterable id="list1">
+                    <smart-list-item value="1"></smart-list-item>
+                </smart-list-box>
+                <p></p>
+                <div class="row justify-content-md-center">
+                <smart-button class="primary bottom-button" id="add_button">Добавить</smart-button>
+                </div>
+                <p></p>
+                <p></p>
+            </div>
+            <div class="col-6">
+                <p>Спецификация</p>
+                <smart-grid id="combo_grid"></smart-grid>
+            </div>
         </div>
     </div>
-</div>
 
 
-<!-- scripts -->
-<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.combobox.js') }}></script>
-<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.grid.js') }}></script>
-<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.list.js') }}></script>
-<script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.table.js') }}></script>
-<script type="module" src={{ url_for('static', filename='combo_view.js') }}></script>
+    <!-- scripts -->
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.combobox.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.grid.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.list.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.table.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='combo_view.js') }}></script>
 
 {% endblock content %}

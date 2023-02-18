@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container-fluid bg-light border">
+        <div class="row justify-content-md-center">
+            <div class="col-6">
+                <p>Список доступного оборудования</p>
+                <p></p>
+                <div class="smart-input-group">
+                    <smart-input class="form-control" placeholder="Введите название для поиска"
+                                 id="kit_input"></smart-input>
+                    <div class="smart-input-group-append">
+                        <smart-button id="clear_button">Сброс</smart-button>
+                    </div>
+                </div>
+                <p></p>
+                <smart-list-box id="listbox_kit_search">
+                </smart-list-box>
+                <div class="row justify-content-md-center">
+                    <smart-button class="primary bottom-button" id="add_button">Добавить</smart-button>
+                </div>
+                <p></p>
+            </div>
+
+            <div class="col-6">
+                <p>Компоновка комплекта оснастки</p>
+                <div class="smart-input-group">
+                    <smart-input class="form-control" placeholder="Введите название для нового комплекта"
+                                 id="kit_name_input"></smart-input>
+                </div>
+                <p></p>
+                <smart-grid id="kit_grid"></smart-grid>
+                <div class="row justify-content-md-center">
+                    <smart-button class="primary bottom-button" id="add_kit_button">Записать в базу</smart-button>
+                    <smart-button class="primary bottom-button" id="clear_kit_button">Очистить</smart-button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.grid.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.list.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.table.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='/smart/source/modules/smart.button.js') }}></script>
+    <script type="module" src={{ url_for('static', filename='new_kit.js') }}></script>
+
+{% endblock content %}

@@ -119,7 +119,7 @@ function enter_handler(event) {
         {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"id": sel_value})
+            body: JSON.stringify({"id": sel_value, 'for_specification': true})
         })
         .then(response => response.json())
         .then(data => {

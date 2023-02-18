@@ -4,11 +4,10 @@
     <div class="container-fluid bg-light border">
         <div class="row">
             <div class="col-6">
-                <p></p>
-                <p>Оборудование</p>
+                <p>Список доступного оборудования</p>
                 <p></p>
                 <div class="smart-input-group">
-                    <smart-input class="form-control" placeholder="Введите название" id="flat_input"></smart-input>
+                    <smart-input class="form-control" placeholder="Введите название для поиска" id="flat_input"></smart-input>
                     <div class="smart-input-group-append">
                         <smart-button id="clear_button">Сброс</smart-button>
                     </div>
@@ -17,34 +16,13 @@
                 <smart-list-box id="listbox_flat_search">
                 </smart-list-box>
                 <p></p>
-                <smart-button class="primary" id="add_button">Добавить</smart-button>
+                <div class="row justify-content-md-center">
+                <smart-button class="primary bottom-button" id="add_button">Добавить</smart-button>
+                </div>
                 <p></p>
-                <p></p>
-                <p>Оснастка</p>
-                <smart-table id="table">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th scope="col">Название</th>
-                            <th scope="col">Цена</th>
-                            <th scope="col">Кол-во</th>
-                            <th scope="col">Стоимость</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Шпилька</td>
-                            <td>10.6</td>
-                            <td>2</td>
-                            <td>21.2</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </smart-table>
             </div>
 
             <div class="col-6">
-                <p></p>
                 <p>Спецификация</p>
                 <smart-grid id="flat_grid"></smart-grid>
             </div>

@@ -1,4 +1,4 @@
-from models import Equipment, Supplier, Level
+from models import Equipment, Supplier, Level, Kit
 import pony.orm as pny
 import pandas as pd
 
@@ -94,5 +94,13 @@ def add_good_level_2():
             )
 
 
-add_good_level_3()
-add_good_level_2()
+# add_good_level_3()
+# add_good_level_2()
+
+
+@pny.db_session
+def clear_kits():
+    pny.delete(p for p in Kit)
+
+
+# clear_kits()
