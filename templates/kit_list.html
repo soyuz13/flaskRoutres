@@ -12,7 +12,13 @@
                             toggle-element-position="near">
                     <smart-tree-items-group id="group-0" hidden>Первый</smart-tree-items-group>
                 </smart-tree>
+                <label id="lab"></label>
             </div>
+
+            <smart-menu id='context_menu' mode="dropDown" close-action="down">
+                <smart-menu-item value="change_quantity"><i class="material-icons">swap_vert</i>Изменить кол-во</smart-menu-item>
+                <smart-menu-item value="remove_item"><i class="material-icons">delete</i>Удалить элемент</smart-menu-item>
+            </smart-menu>
 
             <div class="col-6">
                 <p>Спецификация</p>
